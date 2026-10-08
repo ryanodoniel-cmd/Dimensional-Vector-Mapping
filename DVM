@@ -1,0 +1,18 @@
+async def process_incoming_stream(self, packet: dict) -> dict:
+    # 1. RESOLVE THE W - DIMENSION (The Platform Door Isolation)
+    w_layer_id = packet.get("partner_id") # e.g., "google_gemini"
+    target_user = packet.get("target_user_id") 
+    raw_stream = packet.get("raw_stream", "")
+
+    # Security check: If the W door isn't registered, bounce the connection
+    if w_layer_id not in SPOKE_VOID_STORAGE:
+        return {"action": "DEPLOY_HONEYPOT", "reason": "UNAUTHORIZED_DOOR"}
+
+    # 2. RESOLVE THE X, Y, Z SPATIAL COORDINATES (The Universal Character Math)
+    query_coordinates = await compute_universal_spatial_coordinates(raw_stream)
+    spatial_tag = generate_spatial_bucket_tag(query_coordinates) # Returns "X_dim_45_Y_dim_12_Z_dim_92"
+    
+    token_id = f"TK-{uuid.uuid4().hex[:12].upper()}"
+    
+    # 3. INTERSECT 4D LAYERS: Commit explicitly to [W][XYZ]
+    await self.write_to_redis_wal_tier(token_id, target_user, raw_stream, query_coordinates, spatial_tag, w_layer_id)
